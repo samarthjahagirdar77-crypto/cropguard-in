@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Shield, Droplets, Bug, CloudRain, ArrowRight, CheckCircle, Users, Clock, Languages } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -59,6 +60,14 @@ export default function Home() {
         <div className="container-main">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="animate-fade-in">
+              {/* Logo with animation */}
+              <div className="flex items-center gap-3 mb-6 animate-slide-up">
+                <img 
+                  src={logo} 
+                  alt="CropGuard Logo" 
+                  className="h-16 sm:h-20 w-auto drop-shadow-lg hover:scale-105 transition-transform duration-300"
+                />
+              </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                 Secure Your Harvest.{" "}
                 <span className="text-gradient">Protect Your Future.</span>
