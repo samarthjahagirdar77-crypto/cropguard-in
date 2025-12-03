@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, EyeOff, Phone, KeyRound, Send } from "lucide-react";
+import { Eye, EyeOff, Phone, KeyRound, Send, Shield, Leaf, CloudRain } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo.png";
 
@@ -12,6 +12,7 @@ export default function Login() {
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [loginMethod, setLoginMethod] = useState<"password" | "otp">("password");
+  const [rememberMe, setRememberMe] = useState(false);
   const [formData, setFormData] = useState({
     mobile: "",
     password: "",
@@ -93,25 +94,73 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary/30 via-primary/50 to-mint-dark/30">
-      {/* Decorative circles */}
-      <div className="absolute top-20 left-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-20 w-80 h-80 bg-mint-dark/20 rounded-full blur-3xl" />
-      
-      <Card className="w-full max-w-[420px] md:max-w-[450px] border-0 shadow-2xl rounded-3xl bg-card/95 backdrop-blur-sm relative z-10">
-        <CardContent className="p-6 sm:p-8">
+    <div className="min-h-screen flex">
+      {/* Left Side - Branding (Hidden on mobile/tablet) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-accent via-mint-dark to-forest relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-primary/30 rounded-full blur-2xl" />
+        <div className="absolute bottom-40 right-10 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-primary/20 rounded-full blur-xl" />
+        
+        <div className="flex flex-col items-center justify-center w-full p-12 text-white relative z-10">
+          {/* Logo area */}
+          <div className="mb-8">
+            <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center mb-6">
+              <Shield className="w-14 h-14 text-white" />
+            </div>
+          </div>
+          
+          {/* Tagline */}
+          <h1 className="text-4xl xl:text-5xl font-bold text-center mb-4 leading-tight">
+            Secure Your Harvest
+          </h1>
+          <p className="text-xl text-white/90 text-center max-w-md mb-8">
+            Protect your future with simple and affordable crop insurance
+          </p>
+          
+          {/* Feature highlights */}
+          <div className="space-y-4 w-full max-w-sm">
+            <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                <Shield className="w-5 h-5" />
+              </div>
+              <span className="text-sm">Complete protection against crop loss</span>
+            </div>
+            <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                <Leaf className="w-5 h-5" />
+              </div>
+              <span className="text-sm">Government subsidized premiums</span>
+            </div>
+            <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                <CloudRain className="w-5 h-5" />
+              </div>
+              <span className="text-sm">Weather risk notifications</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-primary/20 via-background to-primary/30 relative">
+        {/* Mobile decorative circles */}
+        <div className="lg:hidden absolute top-10 right-10 w-32 h-32 bg-primary/30 rounded-full blur-3xl" />
+        <div className="lg:hidden absolute bottom-20 left-10 w-40 h-40 bg-accent/20 rounded-full blur-3xl" />
+        
+        <div className="w-full max-w-[420px] bg-card/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-8 relative z-10">
           {/* Logo & Branding */}
           <div className="text-center mb-8">
             <div className="flex justify-center mb-3">
               <img 
                 src={logo} 
                 alt="CropGuard Logo" 
-                className="h-20 w-auto drop-shadow-md"
+                className="h-16 sm:h-20 w-auto drop-shadow-md"
               />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
               Welcome Back
-            </h1>
+            </h2>
             <p className="text-muted-foreground text-sm sm:text-base">
               Login to your CropGuard account
             </p>
@@ -124,7 +173,7 @@ export default function Login() {
               onClick={() => handleTabChange("password")}
               className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
                 loginMethod === "password"
-                  ? "bg-accent text-white shadow-md"
+                  ? "bg-accent text-accent-foreground shadow-md"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -135,7 +184,7 @@ export default function Login() {
               onClick={() => handleTabChange("otp")}
               className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
                 loginMethod === "otp"
-                  ? "bg-accent text-white shadow-md"
+                  ? "bg-accent text-accent-foreground shadow-md"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -168,7 +217,7 @@ export default function Login() {
                     type="button"
                     onClick={handleSendOTP}
                     disabled={formData.mobile.length !== 10 || isLoading}
-                    className="h-12 px-4 bg-accent hover:bg-mint-dark text-white rounded-xl whitespace-nowrap"
+                    className="h-12 px-4 bg-accent hover:bg-mint-dark text-accent-foreground rounded-xl whitespace-nowrap"
                   >
                     {isLoading ? (
                       <span className="animate-pulse">Sending...</span>
@@ -187,35 +236,52 @@ export default function Login() {
 
             {/* Password Tab Content */}
             {loginMethod === "password" && (
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium">
-                  Password
-                </Label>
-                <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className="pl-10 pr-12 h-12 rounded-xl border-border/50 focus:border-accent focus:ring-accent/20"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted transition-colors"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </button>
+              <div className="space-y-4 animate-fade-in">
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-medium">
+                    Password
+                  </Label>
+                  <div className="relative">
+                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      className="pl-10 pr-12 h-12 rounded-xl border-border/50 focus:border-accent focus:ring-accent/20"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted transition-colors"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-                <div className="text-right">
+                
+                {/* Remember me & Forgot password row */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="remember" 
+                      checked={rememberMe}
+                      onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                    />
+                    <label 
+                      htmlFor="remember" 
+                      className="text-sm text-muted-foreground cursor-pointer"
+                    >
+                      Remember me
+                    </label>
+                  </div>
                   <Link 
                     to="/forgot-password" 
                     className="text-sm text-accent hover:text-mint-dark hover:underline transition-colors"
@@ -255,7 +321,7 @@ export default function Login() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full h-12 bg-accent hover:bg-mint-dark text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-base"
+              className="w-full h-12 bg-accent hover:bg-mint-dark text-accent-foreground font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-base"
               disabled={
                 formData.mobile.length !== 10 ||
                 (loginMethod === "password" && !formData.password) ||
@@ -283,8 +349,8 @@ export default function Login() {
           <p className="mt-4 text-xs text-center text-muted-foreground">
             ಸಹಾಯಕ್ಕಾಗಿ ಸಂಪರ್ಕಿಸಿ: +91-8088512345
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
