@@ -1,5 +1,8 @@
 import { Shield, Target, Heart, Users, Award, Headphones } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { ScrollAnimation } from "@/hooks/use-scroll-animation";
+import farmerImage from "@/assets/farmer-field.png";
+import equipmentImage from "@/assets/farm-equipment.png";
 
 const values = [
   {
@@ -32,10 +35,12 @@ export default function About() {
       {/* Hero */}
       <section className="gradient-hero section-padding">
         <div className="container-main text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-6">About CropGuard</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Empowering farmers with simple, transparent, and affordable crop insurance solutions
-          </p>
+          <ScrollAnimation animation="fade-up">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-6">About CropGuard</h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Empowering farmers with simple, transparent, and affordable crop insurance solutions
+            </p>
+          </ScrollAnimation>
         </div>
       </section>
 
@@ -43,7 +48,7 @@ export default function About() {
       <section className="section-padding bg-card">
         <div className="container-main">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <ScrollAnimation animation="slide-left">
               <h2 className="text-3xl font-bold mb-6">Who We Are</h2>
               <p className="text-lg text-muted-foreground mb-4">
                 CropGuard is a dedicated platform helping farmers access crop insurance in a simple and transparent way. We understand the challenges farmers face – unpredictable weather, pest attacks, and market uncertainties.
@@ -54,15 +59,16 @@ export default function About() {
               <p className="text-lg text-muted-foreground">
                 Founded by agricultural experts and technology professionals, we combine deep understanding of farming with modern digital tools to make insurance accessible to every farmer.
               </p>
-            </div>
-            <div className="flex justify-center">
-              <div className="relative">
-                <div className="w-64 h-64 bg-primary rounded-full flex items-center justify-center">
-                  <Shield className="w-24 h-24 text-forest" />
-                </div>
-                <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-accent/20 rounded-full" />
+            </ScrollAnimation>
+            <ScrollAnimation animation="slide-right" delay={200}>
+              <div className="flex justify-center">
+                <img 
+                  src={farmerImage} 
+                  alt="Farmer in field" 
+                  className="w-full max-w-md rounded-2xl shadow-xl"
+                />
               </div>
-            </div>
+            </ScrollAnimation>
           </div>
         </div>
       </section>
@@ -70,13 +76,15 @@ export default function About() {
       {/* Mission */}
       <section className="section-padding">
         <div className="container-main">
-          <div className="bg-accent text-white rounded-3xl p-8 sm:p-12 text-center">
-            <Target className="w-16 h-16 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
-            <p className="text-xl max-w-3xl mx-auto text-white/90">
-              "To empower every farmer with affordable, easy-to-understand crop insurance solutions that protect their livelihood and secure their family's future."
-            </p>
-          </div>
+          <ScrollAnimation animation="scale">
+            <div className="bg-accent text-white rounded-3xl p-8 sm:p-12 text-center">
+              <Target className="w-16 h-16 mx-auto mb-6" />
+              <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
+              <p className="text-xl max-w-3xl mx-auto text-white/90">
+                "To empower every farmer with affordable, easy-to-understand crop insurance solutions that protect their livelihood and secure their family's future."
+              </p>
+            </div>
+          </ScrollAnimation>
         </div>
       </section>
 
@@ -85,12 +93,14 @@ export default function About() {
         <div className="container-main">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
-              <Card key={index} className="text-center border-primary/30">
-                <CardContent className="p-6">
-                  <p className="text-4xl font-bold text-accent mb-2">{stat.number}</p>
-                  <p className="text-muted-foreground">{stat.label}</p>
-                </CardContent>
-              </Card>
+              <ScrollAnimation key={index} animation="fade-up" delay={index * 100}>
+                <Card className="text-center border-primary/30 card-hover">
+                  <CardContent className="p-6">
+                    <p className="text-4xl font-bold text-accent mb-2">{stat.number}</p>
+                    <p className="text-muted-foreground">{stat.label}</p>
+                  </CardContent>
+                </Card>
+              </ScrollAnimation>
             ))}
           </div>
         </div>
@@ -99,31 +109,42 @@ export default function About() {
       {/* Values */}
       <section className="section-padding">
         <div className="container-main">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Farmers Trust Us</h2>
-            <p className="text-muted-foreground">Our core values guide everything we do</p>
-          </div>
+          <ScrollAnimation animation="fade-up">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">Why Farmers Trust Us</h2>
+              <p className="text-muted-foreground">Our core values guide everything we do</p>
+            </div>
+          </ScrollAnimation>
           <div className="grid md:grid-cols-3 gap-8">
             {values.map((value, index) => (
-              <Card key={index} className="card-hover gradient-card border-primary/30">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                    <value.icon className="w-8 h-8 text-forest" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">{value.title}</h3>
-                  <p className="text-muted-foreground">{value.description}</p>
-                </CardContent>
-              </Card>
+              <ScrollAnimation key={index} animation="fade-up" delay={index * 150}>
+                <Card className="card-hover gradient-card border-primary/30 h-full">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                      <value.icon className="w-8 h-8 text-forest" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">{value.title}</h3>
+                    <p className="text-muted-foreground">{value.description}</p>
+                  </CardContent>
+                </Card>
+              </ScrollAnimation>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Team */}
+      {/* Equipment Section */}
       <section className="section-padding bg-card">
         <div className="container-main">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <ScrollAnimation animation="slide-left">
+              <img 
+                src={equipmentImage} 
+                alt="Farm equipment" 
+                className="w-full max-w-md rounded-2xl shadow-xl mx-auto"
+              />
+            </ScrollAnimation>
+            <ScrollAnimation animation="slide-right" delay={200}>
               <h2 className="text-3xl font-bold mb-6">Our Sahayak Network</h2>
               <p className="text-lg text-muted-foreground mb-4">
                 We have a dedicated network of Sahayaks (helpers) across Karnataka who speak your language and understand your farming needs. They are available to:
@@ -143,8 +164,16 @@ export default function About() {
                   </li>
                 ))}
               </ul>
-            </div>
-            <Card className="border-primary/30">
+            </ScrollAnimation>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Card */}
+      <section className="section-padding">
+        <div className="container-main">
+          <ScrollAnimation animation="scale">
+            <Card className="border-primary/30 max-w-lg mx-auto">
               <CardContent className="p-8 text-center">
                 <Headphones className="w-16 h-16 text-accent mx-auto mb-4" />
                 <h3 className="text-2xl font-bold mb-2">Need Help?</h3>
@@ -154,7 +183,7 @@ export default function About() {
                 <p className="text-2xl font-bold text-accent">+91-8088512345</p>
               </CardContent>
             </Card>
-          </div>
+          </ScrollAnimation>
         </div>
       </section>
     </div>

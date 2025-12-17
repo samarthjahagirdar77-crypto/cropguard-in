@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Shield, Droplets, Bug, CloudRain, ArrowRight, CheckCircle, Users, Clock, Languages } from "lucide-react";
 import logo from "@/assets/logo.png";
+import farmerImage from "@/assets/farmer-field.png";
+import cropsImage from "@/assets/crops-illustration.png";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollAnimation } from "@/hooks/use-scroll-animation";
@@ -92,10 +94,12 @@ export default function Home() {
             </div>
             <div className="hidden lg:flex justify-center animate-float">
               <div className="relative">
-                <div className="w-80 h-80 bg-accent/20 rounded-full absolute -top-4 -right-4" />
-                <div className="w-72 h-72 bg-primary rounded-full flex items-center justify-center relative">
-                  <Shield className="w-32 h-32 text-forest" />
-                </div>
+                <img 
+                  src={farmerImage} 
+                  alt="Indian farmer in field" 
+                  className="w-80 h-80 object-cover rounded-full shadow-2xl"
+                />
+                <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-accent/20 rounded-full blur-xl" />
               </div>
             </div>
           </div>
@@ -149,8 +153,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* Crops Section with Image */}
       <section className="section-padding">
+        <div className="container-main">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <ScrollAnimation animation="slide-left">
+              <img 
+                src={cropsImage} 
+                alt="Crops illustration" 
+                className="w-full max-w-lg rounded-2xl shadow-xl mx-auto"
+              />
+            </ScrollAnimation>
+            <ScrollAnimation animation="slide-right" delay={200}>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+                Coverage for All Major Crops
+              </h2>
+              <p className="text-lg text-muted-foreground mb-6">
+                Our insurance covers a wide variety of crops grown across Karnataka and other states, including Paddy, Wheat, Maize, Cotton, Groundnut, and many more.
+              </p>
+              <ul className="space-y-3 mb-6">
+                {["Kharif crops (June-September)", "Rabi crops (October-March)", "Annual crops like Sugarcane"].map((item, index) => (
+                  <li key={index} className="flex items-center gap-3">
+                    <CheckCircle className="h-5 w-5 text-accent flex-shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link to="/plans">
+                <Button className="bg-accent hover:bg-forest text-white">
+                  View All Covered Crops
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </ScrollAnimation>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="section-padding bg-card">
         <div className="container-main">
           <ScrollAnimation animation="fade-up">
             <div className="text-center mb-12">
@@ -178,7 +219,7 @@ export default function Home() {
       </section>
 
       {/* Key Features */}
-      <section className="section-padding bg-card">
+      <section className="section-padding">
         <div className="container-main">
           <ScrollAnimation animation="fade-up">
             <div className="text-center mb-12">
@@ -205,7 +246,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="section-padding">
+      <section className="section-padding bg-card">
         <div className="container-main">
           <ScrollAnimation animation="fade-up">
             <div className="text-center mb-12">
