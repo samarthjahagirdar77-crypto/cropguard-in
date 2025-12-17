@@ -1,59 +1,43 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Eye, EyeOff, Phone, KeyRound, Send, Shield, Leaf, CloudRain } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Phone, KeyRound, User, Shield, Leaf, CloudRain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
 
 export default function Login() {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [loginMethod, setLoginMethod] = useState<"password" | "otp">("password");
   const [rememberMe, setRememberMe] = useState(false);
   const [formData, setFormData] = useState({
+    name: "",
     mobile: "",
     password: "",
-    otp: "",
   });
-  const [otpSent, setOtpSent] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 10);
     setFormData({ ...formData, mobile: value });
   };
 
-  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
-    setFormData({ ...formData, otp: value });
-  };
-
-  const handleSendOTP = () => {
-    if (formData.mobile.length === 10) {
-      setIsLoading(true);
-      setTimeout(() => {
-        setOtpSent(true);
-        setIsLoading(false);
-        toast({
-          title: "OTP Sent!",
-          description: "Please check your mobile for the 6-digit OTP.",
-        });
-      }, 1000);
-    } else {
-      toast({
-        title: "Invalid Mobile Number",
-        description: "Please enter a valid 10-digit mobile number.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!formData.name.trim()) {
+      toast({
+        title: "Name Required",
+        description: "Please enter your name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (formData.mobile.length !== 10) {
       toast({
         title: "Invalid Mobile Number",
@@ -63,7 +47,7 @@ export default function Login() {
       return;
     }
 
-    if (loginMethod === "password" && !formData.password) {
+    if (!formData.password) {
       toast({
         title: "Password Required",
         description: "Please enter your password.",
@@ -72,25 +56,15 @@ export default function Login() {
       return;
     }
 
-    if (loginMethod === "otp" && formData.otp.length !== 6) {
-      toast({
-        title: "Invalid OTP",
-        description: "Please enter a valid 6-digit OTP.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+    // Login and redirect to home
+    login(formData.name, formData.mobile);
+    
     toast({
       title: "Login Successful!",
-      description: "Redirecting to your dashboard...",
+      description: `Welcome back, ${formData.name}!`,
     });
-  };
-
-  const handleTabChange = (method: "password" | "otp") => {
-    setLoginMethod(method);
-    setOtpSent(false);
-    setFormData({ ...formData, otp: "", password: "" });
+    
+    navigate("/");
   };
 
   return (
@@ -166,169 +140,107 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Tab Switcher - Pill Style */}
-          <div className="bg-muted rounded-full p-1 flex mb-6">
-            <button
-              type="button"
-              onClick={() => handleTabChange("password")}
-              className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
-                loginMethod === "password"
-                  ? "bg-accent text-accent-foreground shadow-md"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Password
-            </button>
-            <button
-              type="button"
-              onClick={() => handleTabChange("otp")}
-              className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
-                loginMethod === "otp"
-                  ? "bg-accent text-accent-foreground shadow-md"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              OTP
-            </button>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Name Field */}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-sm font-medium">
+                Full Name <span className="text-muted-foreground">(ಹೆಸರು)</span>
+              </Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Enter your full name"
+                  className="pl-10 h-12 rounded-xl border-border/50 focus:border-accent focus:ring-accent/20"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
             {/* Mobile Number Field */}
             <div className="space-y-2">
               <Label htmlFor="mobile" className="text-sm font-medium">
                 Mobile Number <span className="text-muted-foreground">(ಮೊಬೈಲ್)</span>
               </Label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="mobile"
-                    type="tel"
-                    inputMode="numeric"
-                    placeholder="Enter 10-digit mobile number"
-                    className="pl-10 h-12 rounded-xl border-border/50 focus:border-accent focus:ring-accent/20"
-                    value={formData.mobile}
-                    onChange={handleMobileChange}
-                    required
-                  />
-                </div>
-                {loginMethod === "otp" && (
-                  <Button
-                    type="button"
-                    onClick={handleSendOTP}
-                    disabled={formData.mobile.length !== 10 || isLoading}
-                    className="h-12 px-4 bg-accent hover:bg-mint-dark text-accent-foreground rounded-xl whitespace-nowrap"
-                  >
-                    {isLoading ? (
-                      <span className="animate-pulse">Sending...</span>
-                    ) : otpSent ? (
-                      "Resend"
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4 mr-1" />
-                        Get OTP
-                      </>
-                    )}
-                  </Button>
-                )}
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="mobile"
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="Enter 10-digit mobile number"
+                  className="pl-10 h-12 rounded-xl border-border/50 focus:border-accent focus:ring-accent/20"
+                  value={formData.mobile}
+                  onChange={handleMobileChange}
+                  required
+                />
               </div>
             </div>
 
-            {/* Password Tab Content */}
-            {loginMethod === "password" && (
-              <div className="space-y-4 animate-fade-in">
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-medium">
-                    Password
-                  </Label>
-                  <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      className="pl-10 pr-12 h-12 rounded-xl border-border/50 focus:border-accent focus:ring-accent/20"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted transition-colors"
-                      onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Remember me & Forgot password row */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="remember" 
-                      checked={rememberMe}
-                      onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                    />
-                    <label 
-                      htmlFor="remember" 
-                      className="text-sm text-muted-foreground cursor-pointer"
-                    >
-                      Remember me
-                    </label>
-                  </div>
-                  <Link 
-                    to="/forgot-password" 
-                    className="text-sm text-accent hover:text-mint-dark hover:underline transition-colors"
-                  >
-                    Forgot Password?
-                  </Link>
-                </div>
+            {/* Password Field */}
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-medium">
+                Password
+              </Label>
+              <div className="relative">
+                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  className="pl-10 pr-12 h-12 rounded-xl border-border/50 focus:border-accent focus:ring-accent/20"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </button>
               </div>
-            )}
-
-            {/* OTP Tab Content */}
-            {loginMethod === "otp" && otpSent && (
-              <div className="space-y-2 animate-fade-in">
-                <Label htmlFor="otp" className="text-sm font-medium">
-                  OTP <span className="text-muted-foreground">(ಒಟಿಪಿ)</span>
-                </Label>
-                <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="otp"
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="Enter 6-digit OTP"
-                    className="pl-10 h-12 rounded-xl border-border/50 focus:border-accent focus:ring-accent/20 tracking-widest text-center text-lg font-semibold"
-                    maxLength={6}
-                    value={formData.otp}
-                    onChange={handleOtpChange}
-                    required
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground text-center">
-                  OTP sent to +91 {formData.mobile}
-                </p>
+            </div>
+            
+            {/* Remember me & Forgot password row */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="remember" 
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                />
+                <label 
+                  htmlFor="remember" 
+                  className="text-sm text-muted-foreground cursor-pointer"
+                >
+                  Remember me
+                </label>
               </div>
-            )}
+              <Link 
+                to="/forgot-password" 
+                className="text-sm text-accent hover:text-mint-dark hover:underline transition-colors"
+              >
+                Forgot Password?
+              </Link>
+            </div>
 
             {/* Submit Button */}
             <Button
               type="submit"
               className="w-full h-12 bg-accent hover:bg-mint-dark text-accent-foreground font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-base"
-              disabled={
-                formData.mobile.length !== 10 ||
-                (loginMethod === "password" && !formData.password) ||
-                (loginMethod === "otp" && (!otpSent || formData.otp.length !== 6))
-              }
+              disabled={!formData.name || formData.mobile.length !== 10 || !formData.password}
             >
-              {loginMethod === "password" ? "Login" : "Login with OTP"}
+              Login
             </Button>
           </form>
 

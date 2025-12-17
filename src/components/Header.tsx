@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, Globe } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, ChevronDown, Globe, LogOut, User } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 const navLinks = [
@@ -31,15 +33,29 @@ export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("en");
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout, isAuthenticated } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <header className="bg-card shadow-sm sticky top-0 z-50">
       <div className="container-main">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="CropGuard Logo" className="h-12 lg:h-14 w-auto" />
-          </Link>
+          {/* Welcome Message & Logo */}
+          <div className="flex items-center gap-4">
+            <Link to="/" className="flex items-center gap-2">
+              <img src={logo} alt="CropGuard Logo" className="h-12 lg:h-14 w-auto" />
+            </Link>
+            {isAuthenticated && user && (
+              <div className="hidden sm:block text-sm font-medium text-accent animate-fade-in">
+                Welcome, <span className="font-bold">{user.name}</span>
+              </div>
+            )}
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
@@ -81,16 +97,40 @@ export const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Link to="/login">
-              <Button variant="outline" size="sm">
-                Login
-              </Button>
-            </Link>
-            <Link to="/register">
-              <Button size="sm" className="bg-accent hover:bg-forest text-accent-foreground">
-                Register
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <User className="h-4 w-4" />
+                    {user?.name.split(" ")[0]}
+                    <ChevronDown className="h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard">Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="outline" size="sm">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm" className="bg-accent hover:bg-forest text-accent-foreground">
+                    Register
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -104,7 +144,13 @@ export const Header = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="lg:hidden py-4 border-t">
+          <div className="lg:hidden py-4 border-t animate-fade-in">
+            {/* Mobile Welcome */}
+            {isAuthenticated && user && (
+              <div className="px-4 py-2 mb-2 text-sm font-medium text-accent border-b">
+                Welcome, <span className="font-bold">{user.name}</span>
+              </div>
+            )}
             <nav className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
@@ -121,16 +167,32 @@ export const Header = () => {
                 </Link>
               ))}
               <div className="flex gap-2 px-4 pt-4 mt-2 border-t">
-                <Link to="/login" className="flex-1">
-                  <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>
-                    Login
+                {isAuthenticated ? (
+                  <Button 
+                    variant="outline" 
+                    className="w-full" 
+                    onClick={() => {
+                      handleLogout();
+                      setIsOpen(false);
+                    }}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
                   </Button>
-                </Link>
-                <Link to="/register" className="flex-1">
-                  <Button className="w-full bg-accent hover:bg-forest" onClick={() => setIsOpen(false)}>
-                    Register
-                  </Button>
-                </Link>
+                ) : (
+                  <>
+                    <Link to="/login" className="flex-1">
+                      <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>
+                        Login
+                      </Button>
+                    </Link>
+                    <Link to="/register" className="flex-1">
+                      <Button className="w-full bg-accent hover:bg-forest" onClick={() => setIsOpen(false)}>
+                        Register
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </nav>
           </div>
