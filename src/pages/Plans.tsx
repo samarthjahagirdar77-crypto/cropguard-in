@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { Check, Shield, Star, Crown, Zap, Award } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Check, Shield, Star, Crown, Zap, Award, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -116,6 +116,20 @@ const crops = [
 ];
 
 export default function Plans() {
+  const navigate = useNavigate();
+
+  const handleBuyPlan = (plan: typeof plans[0]) => {
+    navigate("/payment", { 
+      state: { 
+        plan: {
+          name: plan.name,
+          premium: plan.premium,
+          sumInsured: plan.sumInsured,
+        }
+      }
+    });
+  };
+
   return (
     <div>
       {/* Hero */}
@@ -177,11 +191,20 @@ export default function Plans() {
                         </li>
                       ))}
                     </ul>
-                    <Link to="/calculator">
-                      <Button className="w-full bg-accent hover:bg-forest text-white">
-                        Calculate Premium
+                    <div className="space-y-2">
+                      <Button 
+                        className="w-full bg-accent hover:bg-forest text-white"
+                        onClick={() => handleBuyPlan(plan)}
+                      >
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                        Buy This Plan
                       </Button>
-                    </Link>
+                      <Link to="/calculator">
+                        <Button variant="outline" className="w-full border-accent text-accent hover:bg-accent/10">
+                          Calculate Premium
+                        </Button>
+                      </Link>
+                    </div>
                   </CardContent>
                 </Card>
               </ScrollAnimation>
