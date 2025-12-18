@@ -35,7 +35,7 @@ const paymentMethods = [
     id: "phonepe",
     name: "PhonePe",
     description: "India's payment app",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png",
+    icon: "https://download.logo.wine/logo/PhonePe/PhonePe-Logo.wine.png",
     color: "bg-purple-50 border-purple-200",
   },
   {

@@ -13,10 +13,14 @@ import {
   Clock,
   CheckCircle,
   CloudRain,
+  Download,
+  Award,
+  FileCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo.png";
 
 const menuItems = [
@@ -84,6 +88,81 @@ const mockNotifications = [
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("policies");
+  const { toast } = useToast();
+
+  const handleDownloadDocument = (policyId: string, type: string) => {
+    // Simulate document download
+    toast({
+      title: "Downloading Document",
+      description: `Your ${type} document for ${policyId} is being downloaded.`,
+    });
+    
+    // Create a simple text file as a demo
+    const content = `CropGuard Insurance - Policy Document
+=====================================
+Policy ID: ${policyId}
+Type: ${type.toUpperCase()}
+Generated: ${new Date().toLocaleDateString()}
+
+This is a sample policy document.
+For actual implementation, this would be a proper PDF document.`;
+    
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${policyId}-${type}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleGenerateCertificate = (policy: typeof mockPolicies[0]) => {
+    toast({
+      title: "Certificate Generated",
+      description: `Insurance certificate for ${policy.crop} policy has been generated.`,
+    });
+    
+    // Generate certificate content
+    const certificateContent = `
+╔══════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║                    CROPGUARD INSURANCE                             ║
+║               DIGITAL INSURANCE CERTIFICATE                        ║
+║                                                                    ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                    ║
+║  This is to certify that the policyholder is insured under        ║
+║  the CropGuard Crop Insurance Scheme.                             ║
+║                                                                    ║
+║  ─────────────────────────────────────────────────────────────    ║
+║                                                                    ║
+║  Policy Number    : ${policy.id.padEnd(30)}      ║
+║  Crop Insured     : ${policy.crop.padEnd(30)}      ║
+║  Insured Area     : ${policy.area.padEnd(30)}      ║
+║  Sum Insured      : ${policy.sumInsured.padEnd(30)}      ║
+║  Premium Paid     : ${policy.premium.padEnd(30)}      ║
+║  Coverage Period  : ${policy.startDate} to ${policy.endDate}          ║
+║  Status           : ${policy.status.padEnd(30)}      ║
+║                                                                    ║
+║  ─────────────────────────────────────────────────────────────    ║
+║                                                                    ║
+║  Certificate ID: CERT-${Date.now()}                       ║
+║  Generated on: ${new Date().toLocaleString()}                  ║
+║                                                                    ║
+║  This certificate is digitally generated and is valid without     ║
+║  physical signature.                                               ║
+║                                                                    ║
+╚══════════════════════════════════════════════════════════════════╝
+`;
+    
+    const blob = new Blob([certificateContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `CropGuard-Certificate-${policy.id}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary/30 via-background to-primary/5">
@@ -250,9 +329,24 @@ export default function Dashboard() {
                             <p className="text-xs text-muted-foreground">Sum Insured</p>
                             <p className="font-bold text-lg text-accent">{policy.sumInsured}</p>
                           </div>
-                          <Button variant="outline" size="sm" className="border-accent text-accent hover:bg-accent hover:text-white">
-                            View <ChevronRight className="h-4 w-4 ml-1" />
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="border-accent text-accent hover:bg-accent hover:text-white"
+                              onClick={() => handleDownloadDocument(policy.id, "policy")}
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              className="bg-accent hover:bg-forest text-white"
+                              onClick={() => handleGenerateCertificate(policy)}
+                            >
+                              <Award className="h-4 w-4 mr-1" />
+                              Certificate
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}
