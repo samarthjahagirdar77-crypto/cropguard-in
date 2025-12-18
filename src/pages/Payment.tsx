@@ -82,6 +82,20 @@ export default function Payment() {
     sumInsured: "₹1,00,000",
   };
 
+  // Parse premium amount from string (e.g., "₹1,200" → 1200)
+  const parsePremium = (premiumStr: string): number => {
+    return parseInt(premiumStr.replace(/[₹,]/g, ""), 10) || 0;
+  };
+
+  const premiumAmount = parsePremium(plan.premium);
+  const gstRate = 0.18;
+  const gstAmount = Math.round(premiumAmount * gstRate);
+  const totalAmount = premiumAmount + gstAmount;
+
+  const formatCurrency = (amount: number): string => {
+    return `₹${amount.toLocaleString("en-IN")}`
+  };
+
   const handlePayment = () => {
     if (!selectedMethod) {
       toast({
@@ -279,26 +293,29 @@ export default function Payment() {
                       <span className="font-medium">{plan.sumInsured}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Premium</span>
+                      <span className="text-muted-foreground">Premium (per acre)</span>
                       <span className="font-medium">{plan.premium}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">GST (18%)</span>
-                      <span className="font-medium">₹216</span>
+                      <span className="font-medium">{formatCurrency(gstAmount)}</span>
                     </div>
                   </div>
                   <div className="border-t pt-4">
                     <div className="flex justify-between items-center">
                       <span className="font-semibold">Total Amount</span>
-                      <span className="text-2xl font-bold text-accent">₹1,416</span>
+                      <span className="text-2xl font-bold text-accent">{formatCurrency(totalAmount)}</span>
                     </div>
+                    <p className="text-xs text-muted-foreground mt-1 text-right">
+                      (Inclusive of all taxes)
+                    </p>
                   </div>
                   <Button 
                     className="w-full bg-accent hover:bg-forest text-white h-12 text-base"
                     onClick={handlePayment}
                     disabled={isProcessing}
                   >
-                    {isProcessing ? "Processing..." : "Pay Now"}
+                    {isProcessing ? "Processing..." : `Pay ${formatCurrency(totalAmount)}`}
                   </Button>
                   <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                     <Shield className="h-3 w-3" />
